@@ -3,10 +3,8 @@ package com.visioncamerafacedetector
 import android.annotation.SuppressLint
 import android.media.Image
 import androidx.camera.core.ImageProxy
-
 import com.facebook.react.bridge.WritableNativeArray
 import com.facebook.react.bridge.WritableNativeMap
-
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
