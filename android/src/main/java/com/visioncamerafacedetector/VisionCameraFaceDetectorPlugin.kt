@@ -1,3 +1,5 @@
+package com.visioncamerafacedetector
+
 import android.annotation.SuppressLint
 import android.media.Image
 import androidx.camera.core.ImageProxy
