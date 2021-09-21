@@ -1,21 +1,21 @@
-# vision-camera-ocr
+# vision-camera-facedetector
 
-VisionCamera Frame Processor Plugin that uses MLKit Text Recognition API to recognize text in any Latin-based character set
+VisionCamera Frame Processor Plugin that uses MLKit Face Recognition API to recognize faces
 
 ## Installation
 
 ```sh
-npm install vision-camera-ocr
+npm install vision-camera-facedetector
 ```
 
 ## Usage
 
 ```js
-import VisionCameraOcr from "vision-camera-ocr";
+import VisionCameraFaceDetector from "vision-camera-facedetector";
 
 // ...
 
-const result = await VisionCameraOcr.multiply(3, 7);
+
 ```
 
 ## Contributing
