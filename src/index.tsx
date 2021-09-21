@@ -5,7 +5,7 @@ import type { Frame } from 'react-native-vision-camera';
  * Scans OCR.
  */
 
-export function faceDetectorOCR(frame: Frame): any {
+export function faceDetector(frame: Frame): any {
   'worklet';
   // @ts-ignore
   return __faceDetector(frame);

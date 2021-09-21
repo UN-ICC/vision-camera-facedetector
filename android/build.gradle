@@ -131,7 +131,7 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
-  implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.0'
+  implementation 'com.google.mlkit:face-detection:16.1.2'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "androidx.camera:camera-core:1.1.0-alpha06"
   implementation "com.facebook.react:react-native:+"  // From node_modules

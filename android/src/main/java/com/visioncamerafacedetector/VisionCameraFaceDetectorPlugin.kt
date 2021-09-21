@@ -1,57 +1,60 @@
-import android.R.attr.label
 import android.annotation.SuppressLint
-import android.graphics.Rect
 import android.media.Image
 import androidx.camera.core.ImageProxy
-import com.facebook.react.bridge.ReadableArray
-import com.facebook.react.bridge.WritableArray
+
 import com.facebook.react.bridge.WritableNativeArray
 import com.facebook.react.bridge.WritableNativeMap
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
+
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.TextRecognizer
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
-import com.mrousavy.camera.utils.pushInt
 
 
-class VisionCameraOcrPlugin: FrameProcessorPlugin("faceDetector") {
+class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
 
   override fun callback(frame: ImageProxy, params: Array<Any>): Any? {
     @SuppressLint("UnsafeOptInUsageError")
     val mediaImage: Image? = frame.image
-    val textRecognizer: TextRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    val array = WritableNativeArray()
+    val options = FaceDetectorOptions.Builder()
+      .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
+      .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+      .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+      .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+      .enableTracking()
+      .build()
 
+    val array = WritableNativeArray()
 
     if (mediaImage != null) {
       val image = InputImage.fromMediaImage(mediaImage, frame.imageInfo.rotationDegrees)
-      var task: Task<Text> = textRecognizer.process(image)
-      try {
-        var extractedInfo = Tasks.await(task)
-        for (block in extractedInfo.textBlocks) {
-          for (line in block.lines) {
-            val lineText = line.text
-            val lineBoundingBox: Rect? = line.boundingBox
-            val map = WritableNativeMap()
-            map.putString("text", lineText)
-            map.putInt("height", image.height)
-            map.putInt("width", image.width)
-            val bounds = WritableNativeArray()
-            bounds.pushInt(lineBoundingBox?.left)
-            bounds.pushInt(lineBoundingBox?.bottom)
-            bounds.pushInt(lineBoundingBox?.right)
-            bounds.pushInt(lineBoundingBox?.top)
-            map.putArray("bounds", bounds)
-            array.pushMap(map)
+      val detector = FaceDetection.getClient(options)
+      val result = detector.process(image)
+        .addOnSuccessListener { faces ->
+          // Task completed successfully
+          // ...
+          if (faces.size != 1){
+            for (face in faces) {
+              val map = WritableNativeMap()
+              map.putBoolean("hasSmile", face.smilingProbability>0.5)
+              map.putInt("trackingId", face.trackingId)
+              map.putInt("height", image.height)
+              map.putInt("width", image.width)
+              val bounds = WritableNativeArray()
+              bounds.pushInt(face.boundingBox?.left)
+              bounds.pushInt(face.boundingBox?.bottom)
+              bounds.pushInt(face.boundingBox?.right)
+              bounds.pushInt(face.boundingBox?.top)
+              map.putArray("bounds", bounds)
+              array.pushMap(map)
+            }
           }
+
         }
-      } catch (e: Exception) {
-        e.printStackTrace()
-      }
+        .addOnFailureListener { e ->
+          // Task failed with an exception
+          // ...
+        }
 
     }
     return array
