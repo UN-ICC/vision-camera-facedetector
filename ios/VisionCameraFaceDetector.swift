@@ -17,10 +17,7 @@ public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBas
       let image = UIImage(cgImage: cgImage)
 
 
-      let analytics = AnalyticsServiceFactory.serviceWith(type: .UNAnalytics)
-      let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,
-                                                               cropSize: CGFloat(160),
-                                                               analyticsService: analytics)
+      let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,cropSize: CGFloat(160))
 
 
       let extractedData =  faceExtractor.extractFace(image)

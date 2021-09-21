@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-		5E555C0D2413F4C50049A1A2 /* VisionCameraFaceDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* VisionCameraFaceDetector.m */; };
-		F4FF95D7245B92E800C19C63 /*  VisionCameraFaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  VisionCameraFaceDetector.swift */; };
-
+		F4FF95D7245B92E800C19C63 /* VisionCameraFaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,11 +24,14 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libVisionCameraFaceDetector.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVisionCameraFaceDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
-
 		B3E7B5891CC2AC0600A0062D /* VisionCameraFaceDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionCameraFaceDetector.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisionCameraFaceDetector-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCameraFaceDetector.swift; sourceTree = "<group>"; };
-
+		FE4835C826F9E68200502B77 /* FeatureExtractorServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureExtractorServiceFactory.swift; sourceTree = "<group>"; };
+		FE4835C926F9E68200502B77 /* FeatureExtractorServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureExtractorServiceProtocol.swift; sourceTree = "<group>"; };
+		FE4835CB26F9E68200502B77 /* FaceExtractorMLKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceExtractorMLKitService.swift; sourceTree = "<group>"; };
+		FE4835CC26F9E68200502B77 /* NativeFeatureExtractorFullImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorFullImageService.swift; sourceTree = "<group>"; };
+		FE4835CD26F9E68200502B77 /* NativeFeatureExtractorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,13 +56,32 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-
+				FE4835C726F9E68100502B77 /* FeatureExtractorService */,
 				F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */,
 				B3E7B5891CC2AC0600A0062D /* VisionCameraFaceDetector.m */,
 				F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */,
-
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		FE4835C726F9E68100502B77 /* FeatureExtractorService */ = {
+			isa = PBXGroup;
+			children = (
+				FE4835C826F9E68200502B77 /* FeatureExtractorServiceFactory.swift */,
+				FE4835C926F9E68200502B77 /* FeatureExtractorServiceProtocol.swift */,
+				FE4835CA26F9E68200502B77 /* Service */,
+			);
+			path = FeatureExtractorService;
+			sourceTree = "<group>";
+		};
+		FE4835CA26F9E68200502B77 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				FE4835CB26F9E68200502B77 /* FaceExtractorMLKitService.swift */,
+				FE4835CC26F9E68200502B77 /* NativeFeatureExtractorFullImageService.swift */,
+				FE4835CD26F9E68200502B77 /* NativeFeatureExtractorService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,10 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
 				F4FF95D7245B92E800C19C63 /* VisionCameraFaceDetector.swift in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* VisionCameraFaceDetector.m in Sources */,
-
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,11 +254,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = VisionCameraFaceDetector;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "VisionCameraFaceDetector-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.2;
-
 			};
 			name = Debug;
 		};
@@ -259,10 +273,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = VisionCameraFaceDetector;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "VisionCameraFaceDetector-Bridging-Header.h";
 				SWIFT_VERSION = 5.2;
-
 			};
 			name = Release;
 		};
