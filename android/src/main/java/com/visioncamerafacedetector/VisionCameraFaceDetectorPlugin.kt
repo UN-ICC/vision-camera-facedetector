@@ -27,6 +27,8 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
       .enableTracking()
       .build()
 
+    val rotated: Boolean = (frame.imageInfo.rotationDegrees == 90 || frame.imageInfo.rotationDegrees == 270)
+
     val array = WritableNativeArray()
 
     if (mediaImage != null) {
@@ -41,13 +43,13 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
             val map = WritableNativeMap()
             map.putBoolean("hasSmile", face.smilingProbability > 0.5)
             map.putInt("trackingId", face.trackingId)
-            map.putInt("height", if (frame.imageInfo.rotationDegrees == 90) image.width else image.height)
-            map.putInt("width", if (frame.imageInfo.rotationDegrees == 90) image.height else image.width)
+            map.putInt("height", if (rotated) image.width else image.height)
+            map.putInt("width", if (rotated) image.height else image.width)
             val bounds = WritableNativeArray()
-            bounds.pushInt(face.boundingBox?.left)
-            bounds.pushInt(face.boundingBox?.top)
-            bounds.pushInt(face.boundingBox?.right)
-            bounds.pushInt(face.boundingBox?.bottom)
+            bounds.pushInt(minOf(face.boundingBox?.left,face.boundingBox?.right))
+            bounds.pushInt(minOf(face.boundingBox?.top,face.boundingBox?.bottom))
+            bounds.pushInt(maxOf(face.boundingBox?.left,face.boundingBox?.right))
+            bounds.pushInt(maxOf(face.boundingBox?.top,face.boundingBox?.bottom))
             map.putArray("bounds", bounds)
             array.pushMap(map)
           }
