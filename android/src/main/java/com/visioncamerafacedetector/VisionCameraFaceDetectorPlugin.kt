@@ -38,7 +38,7 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
       try {
         var faces = Tasks.await(task)
 
-        if (faces.size == 1) {
+        if (faces.size >= 1) {
           for (face in faces) {
             val map = WritableNativeMap()
             map.putBoolean("hasSmile", face.smilingProbability > 0.5)
