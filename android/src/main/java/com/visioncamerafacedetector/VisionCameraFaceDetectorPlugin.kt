@@ -45,6 +45,8 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
             map.putInt("trackingId", face.trackingId)
             map.putInt("height", if (rotated) image.width else image.height)
             map.putInt("width", if (rotated) image.height else image.width)
+            map.putDouble("eyeRight", face.rightEyeOpenProbability.toDouble())
+            map.putDouble("eyeLeft", face.leftEyeOpenProbability.toDouble())
             val bounds = WritableNativeArray()
             bounds.pushInt(minOf(face.boundingBox?.left,face.boundingBox?.right))
             bounds.pushInt(minOf(face.boundingBox?.top,face.boundingBox?.bottom))

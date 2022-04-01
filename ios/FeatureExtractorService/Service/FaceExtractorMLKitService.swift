@@ -29,6 +29,14 @@ extension Face: Feature{
   var smileConfidence: Float{
     return Float(self.smilingProbability)
   }
+  
+  var eyeRight: Float{
+    return Float(self.rightEyeOpenProbability)
+  }
+  var eyeLeft: Float{
+    return Float(self.leftEyeOpenProbability)
+  }
+    
 }
 
 

@@ -14,6 +14,8 @@ protocol Feature{
   var trackingIDValue: Int { get }
   var hasSmile: Bool { get }
   var smileConfidence: Float { get }
+  var eyeRight: Float { get }
+  var eyeLeft: Float { get }
 }
 
 extension CIFaceFeature: Feature {
@@ -22,6 +24,12 @@ extension CIFaceFeature: Feature {
   }
   var smileConfidence: Float{
     return self.hasSmile ? 1.0 : 0.0
+  }
+  var eyeRight: Float{
+    return self.rightEyeClosed ? 1.0 : 0.0
+  }
+  var eyeLeft: Float{
+    return self.leftEyeClosed ? 1.0 : 0.0
   }
 }
 

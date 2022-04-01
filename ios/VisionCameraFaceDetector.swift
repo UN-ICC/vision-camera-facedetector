@@ -16,9 +16,7 @@ public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBas
       let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
       let image = UIImage(cgImage: cgImage)
       
-      
-      
-      var imagePixels = Int(image.size.width*image.size.height*4)
+      let imagePixels = Int(image.size.width*image.size.height*4)
       var p = 0
       let provider = cgImage.dataProvider
       let providerData = provider!.data
@@ -31,9 +29,9 @@ public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBas
         luminance += r*0.299 + g*0.587 + b*0.114;
         p = p + 4
       }
-      
+
       luminance /= image.size.width*image.size.height;
-  
+
 
       let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,cropSize: CGFloat(160))
 
@@ -42,22 +40,23 @@ public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBas
       let features = extractedData?.features
 
 
-      var result:[Any] = []
+  
+      var result =  [String:Any]()
 
       if ((features) != nil) {
-        result.append([
-          "hasSmile": Bool(features?.hasSmile ?? false),
-          "bounds": [Int(features?.bounds.minX ?? 0),
-                     Int(features?.bounds.minY ?? 0),
-                     Int(features?.bounds.maxX ?? 0),
-                     Int(features?.bounds.maxY ?? 0)],
-          "height": Int(CVPixelBufferGetHeight(imageBuffer)),
-          "width": Int(CVPixelBufferGetWidth(imageBuffer)),
-          "trackingId": features?.trackingIDValue as Any,
-          "luminance": luminance
-        ] )
+        result.updateValue(Bool(features?.hasSmile ?? false), forKey: "hasSmile")
+        result.updateValue([Int(features?.bounds.minX ?? 0),
+                            Int(features?.bounds.minY ?? 0),
+                            Int(features?.bounds.maxX ?? 0),
+                            Int(features?.bounds.maxY ?? 0)], forKey: "bounds")
+        result.updateValue(Int(CVPixelBufferGetHeight(imageBuffer)), forKey: "height")
+        result.updateValue(Int(CVPixelBufferGetWidth(imageBuffer)), forKey: "width")
+        result.updateValue(Float(features?.eyeRight ?? 0.0), forKey: "eyeRight")
+        result.updateValue(Float(features?.eyeLeft ?? 0.0), forKey: "eyeLeft")
+        result.updateValue(features?.trackingIDValue as Any, forKey: "trackingId")
+        result.updateValue(luminance, forKey: "luminance")
+        
       }
-      return result
+      return [result]
     }
 }
-
