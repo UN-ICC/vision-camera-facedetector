@@ -9,29 +9,13 @@ public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBas
       guard let imageBuffer = CMSampleBufferGetImageBuffer(frame.buffer) else {
           return nil
       }
-
-      // Convert buffer to UIImage
       let ciimage = CIImage(cvPixelBuffer: imageBuffer)
       let context = CIContext(options: nil)
       let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
       let image = UIImage(cgImage: cgImage)
       
-      let imagePixels = Int(image.size.width*image.size.height*4)
-      var p = 0
-      let provider = cgImage.dataProvider
-      let providerData = provider!.data
-      let data = CFDataGetBytePtr(providerData)
-      var luminance = 0.0
-      while p < imagePixels {
-        let r = CGFloat(data![p]) / 255.0
-        let g = CGFloat(data![p + 1]) / 255.0
-        let b = CGFloat(data![p + 2]) / 255.0
-        luminance += r*0.299 + g*0.587 + b*0.114;
-        p = p + 4
-      }
-
-      luminance /= image.size.width*image.size.height;
-
+      let imageQService = ImageQualityService(buffer: frame.buffer)
+      let luminance = imageQService.getBrightness()
 
       let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,cropSize: CGFloat(160))
 

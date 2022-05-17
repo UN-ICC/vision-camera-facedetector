@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		F4FF95D7245B92E800C19C63 /* VisionCameraFaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */; };
+		FEE2DE12283381F400AA2B1F /* ImageQualityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE0A283381F300AA2B1F /* ImageQualityService.swift */; };
+		FEE2DE13283381F400AA2B1F /* FeatureExtractorServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE0C283381F300AA2B1F /* FeatureExtractorServiceFactory.swift */; };
+		FEE2DE14283381F400AA2B1F /* FeatureExtractorServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE0D283381F300AA2B1F /* FeatureExtractorServiceProtocol.swift */; };
+		FEE2DE15283381F400AA2B1F /* FaceExtractorMLKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE0F283381F300AA2B1F /* FaceExtractorMLKitService.swift */; };
+		FEE2DE16283381F400AA2B1F /* NativeFeatureExtractorFullImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE10283381F300AA2B1F /* NativeFeatureExtractorFullImageService.swift */; };
+		FEE2DE17283381F400AA2B1F /* NativeFeatureExtractorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE11283381F300AA2B1F /* NativeFeatureExtractorService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,11 +33,12 @@
 		B3E7B5891CC2AC0600A0062D /* VisionCameraFaceDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionCameraFaceDetector.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisionCameraFaceDetector-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCameraFaceDetector.swift; sourceTree = "<group>"; };
-		FE4835C826F9E68200502B77 /* FeatureExtractorServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureExtractorServiceFactory.swift; sourceTree = "<group>"; };
-		FE4835C926F9E68200502B77 /* FeatureExtractorServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureExtractorServiceProtocol.swift; sourceTree = "<group>"; };
-		FE4835CB26F9E68200502B77 /* FaceExtractorMLKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceExtractorMLKitService.swift; sourceTree = "<group>"; };
-		FE4835CC26F9E68200502B77 /* NativeFeatureExtractorFullImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorFullImageService.swift; sourceTree = "<group>"; };
-		FE4835CD26F9E68200502B77 /* NativeFeatureExtractorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorService.swift; sourceTree = "<group>"; };
+		FEE2DE0A283381F300AA2B1F /* ImageQualityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageQualityService.swift; sourceTree = "<group>"; };
+		FEE2DE0C283381F300AA2B1F /* FeatureExtractorServiceFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureExtractorServiceFactory.swift; sourceTree = "<group>"; };
+		FEE2DE0D283381F300AA2B1F /* FeatureExtractorServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureExtractorServiceProtocol.swift; sourceTree = "<group>"; };
+		FEE2DE0F283381F300AA2B1F /* FaceExtractorMLKitService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceExtractorMLKitService.swift; sourceTree = "<group>"; };
+		FEE2DE10283381F300AA2B1F /* NativeFeatureExtractorFullImageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorFullImageService.swift; sourceTree = "<group>"; };
+		FEE2DE11283381F300AA2B1F /* NativeFeatureExtractorService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +63,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				FE4835C726F9E68100502B77 /* FeatureExtractorService */,
+				FEE2DE08283381F300AA2B1F /* Services */,
 				F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */,
 				B3E7B5891CC2AC0600A0062D /* VisionCameraFaceDetector.m */,
 				F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */,
@@ -64,22 +71,39 @@
 			);
 			sourceTree = "<group>";
 		};
-		FE4835C726F9E68100502B77 /* FeatureExtractorService */ = {
+		FEE2DE08283381F300AA2B1F /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				FE4835C826F9E68200502B77 /* FeatureExtractorServiceFactory.swift */,
-				FE4835C926F9E68200502B77 /* FeatureExtractorServiceProtocol.swift */,
-				FE4835CA26F9E68200502B77 /* Service */,
+				FEE2DE09283381F300AA2B1F /* ImageQualiityService */,
+				FEE2DE0B283381F300AA2B1F /* FeatureExtractorService */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		FEE2DE09283381F300AA2B1F /* ImageQualiityService */ = {
+			isa = PBXGroup;
+			children = (
+				FEE2DE0A283381F300AA2B1F /* ImageQualityService.swift */,
+			);
+			path = ImageQualiityService;
+			sourceTree = "<group>";
+		};
+		FEE2DE0B283381F300AA2B1F /* FeatureExtractorService */ = {
+			isa = PBXGroup;
+			children = (
+				FEE2DE0C283381F300AA2B1F /* FeatureExtractorServiceFactory.swift */,
+				FEE2DE0D283381F300AA2B1F /* FeatureExtractorServiceProtocol.swift */,
+				FEE2DE0E283381F300AA2B1F /* Service */,
 			);
 			path = FeatureExtractorService;
 			sourceTree = "<group>";
 		};
-		FE4835CA26F9E68200502B77 /* Service */ = {
+		FEE2DE0E283381F300AA2B1F /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				FE4835CB26F9E68200502B77 /* FaceExtractorMLKitService.swift */,
-				FE4835CC26F9E68200502B77 /* NativeFeatureExtractorFullImageService.swift */,
-				FE4835CD26F9E68200502B77 /* NativeFeatureExtractorService.swift */,
+				FEE2DE0F283381F300AA2B1F /* FaceExtractorMLKitService.swift */,
+				FEE2DE10283381F300AA2B1F /* NativeFeatureExtractorFullImageService.swift */,
+				FEE2DE11283381F300AA2B1F /* NativeFeatureExtractorService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -142,6 +166,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4FF95D7245B92E800C19C63 /* VisionCameraFaceDetector.swift in Sources */,
+				FEE2DE12283381F400AA2B1F /* ImageQualityService.swift in Sources */,
+				FEE2DE13283381F400AA2B1F /* FeatureExtractorServiceFactory.swift in Sources */,
+				FEE2DE17283381F400AA2B1F /* NativeFeatureExtractorService.swift in Sources */,
+				FEE2DE15283381F400AA2B1F /* FaceExtractorMLKitService.swift in Sources */,
+				FEE2DE14283381F400AA2B1F /* FeatureExtractorServiceProtocol.swift in Sources */,
+				FEE2DE16283381F400AA2B1F /* NativeFeatureExtractorFullImageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
