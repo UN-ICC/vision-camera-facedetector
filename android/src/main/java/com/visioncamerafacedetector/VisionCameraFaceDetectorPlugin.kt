@@ -12,6 +12,7 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
+import com.visioncamerafacedetector.services.ImageQualityService
 
 
 class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
@@ -26,6 +27,8 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
       .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
       .enableTracking()
       .build()
+
+    val imageService = ImageQualityService(frame)
 
     val rotated: Boolean = (frame.imageInfo.rotationDegrees == 90 || frame.imageInfo.rotationDegrees == 270)
 
@@ -47,6 +50,7 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
             map.putInt("width", if (rotated) image.height else image.width)
             map.putDouble("eyeRight", face.rightEyeOpenProbability.toDouble())
             map.putDouble("eyeLeft", face.leftEyeOpenProbability.toDouble())
+            map.putDouble("luminance", imageService.getLuminance())
             val bounds = WritableNativeArray()
             bounds.pushInt(minOf(face.boundingBox?.left,face.boundingBox?.right))
             bounds.pushInt(minOf(face.boundingBox?.top,face.boundingBox?.bottom))
