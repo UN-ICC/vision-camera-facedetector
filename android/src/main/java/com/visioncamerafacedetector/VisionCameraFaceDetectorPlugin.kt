@@ -1,6 +1,7 @@
 package com.visioncamerafacedetector
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.media.Image
 import androidx.camera.core.ImageProxy
 import com.facebook.react.bridge.WritableNativeArray
@@ -13,6 +14,7 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
 import com.visioncamerafacedetector.services.ImageQualityService
+import com.visioncamerafacedetector.services.LuminanceStats
 
 
 class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
@@ -43,14 +45,23 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
 
         if (faces.size >= 1) {
           for (face in faces) {
+
+            val f = Rect(face.boundingBox.left, face.boundingBox.top, face.boundingBox.right, face.boundingBox.bottom)
+
+            val luminanceStats:LuminanceStats = imageService.getLuminanceStats(f, image.width)
+
+            val imageWidth = if (rotated) image.height else image.width
+            val imageHeight = if (rotated) image.width else image.height
+
             val map = WritableNativeMap()
             map.putBoolean("hasSmile", face.smilingProbability > 0.5)
             map.putInt("trackingId", face.trackingId)
-            map.putInt("height", if (rotated) image.width else image.height)
-            map.putInt("width", if (rotated) image.height else image.width)
+            map.putInt("height", imageHeight)
+            map.putInt("width",imageWidth)
             map.putDouble("eyeRight", face.rightEyeOpenProbability.toDouble())
             map.putDouble("eyeLeft", face.leftEyeOpenProbability.toDouble())
-            map.putDouble("luminance", imageService.getLuminance())
+            map.putDouble("luminance", luminanceStats.scene)
+            map.putDouble("splitLightingDifference", luminanceStats.splitLightingDifference)
             val bounds = WritableNativeArray()
             bounds.pushInt(minOf(face.boundingBox?.left,face.boundingBox?.right))
             bounds.pushInt(minOf(face.boundingBox?.top,face.boundingBox?.bottom))
