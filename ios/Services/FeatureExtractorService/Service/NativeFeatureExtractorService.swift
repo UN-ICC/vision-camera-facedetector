@@ -24,7 +24,7 @@ class NativeFeatureExtractorService: FeatureExtractorServiceProtocol {
     self.cropSize = cropSize
   }
   
-  func extractFace(_ img: UIImage) -> (face: UIImage, features: Feature)? {
+  func extractFace(_ img: UIImage) -> (face: [UIImage], features: [Feature])? {
     defer {
       ciContext.clearCaches()
     }
@@ -32,28 +32,32 @@ class NativeFeatureExtractorService: FeatureExtractorServiceProtocol {
       return nil
     }
     //Detects faces base on your `ciImage`
-    let features = faceDetector.features(in: ciImage, options: [
+    let featuresArray = faceDetector.features(in: ciImage, options: [
       CIDetectorSmile: true
     ]).compactMap({ $0 as? CIFaceFeature })
     
-    guard let feature = features.first,
-          feature.type == CIFeatureTypeFace
-    else {
-      return nil
+    
+    var features: [Feature] = []
+    var resizedImages: [UIImage] = []
+    
+    for f in featuresArray{
+      let feature = f
+      
+      let reducedCIImage = ciImage
+        .cropped(to: feature.bounds)
+      
+      guard let cgImage = ciContext.createCGImage(reducedCIImage, from: reducedCIImage.extent) else { return nil }
+      let newImage = UIImage(cgImage: cgImage)
+      
+      UIGraphicsBeginImageContextWithOptions(CGSize(width: cropSize, height: cropSize), false, 0.0);
+      newImage.draw(in: CGRect(x: 0, y: 0, width: cropSize, height: cropSize))
+      guard let resizeImage:UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return nil }
+      UIGraphicsEndImageContext()
+      resizedImages.append(resizeImage)
+      features.append(feature)
     }
     
-    let reducedCIImage = ciImage
-      .cropped(to: feature.bounds)
-    
-    guard let cgImage = ciContext.createCGImage(reducedCIImage, from: reducedCIImage.extent) else { return nil }
-    let newImage = UIImage(cgImage: cgImage)
-    
-    UIGraphicsBeginImageContextWithOptions(CGSize(width: cropSize, height: cropSize), false, 0.0);
-    newImage.draw(in: CGRect(x: 0, y: 0, width: cropSize, height: cropSize))
-    guard let resizeImage:UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return nil }
-    UIGraphicsEndImageContext()
-    
-    return (resizeImage,feature)
+    return (resizedImages,features)
   }
   
 }

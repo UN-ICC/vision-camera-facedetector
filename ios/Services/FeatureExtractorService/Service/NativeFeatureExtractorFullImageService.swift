@@ -22,7 +22,7 @@ class NativeFeatureExtractorFullImageService: FeatureExtractorServiceProtocol {
     self.cropSize = cropSize
   }
   
-  func extractFace(_ img: UIImage) -> (face: UIImage, features: Feature)? {
+  func extractFace(_ img: UIImage) -> (face: [UIImage], features: [Feature])? {
     defer {
       ciContext.clearCaches()
     }
@@ -30,41 +30,44 @@ class NativeFeatureExtractorFullImageService: FeatureExtractorServiceProtocol {
       return nil
     }
     //Detects faces base on your `ciImage`
-    let features = faceDetector.features(in: ciImage, options: [
+    let featuresArray = faceDetector.features(in: ciImage, options: [
       CIDetectorSmile: true
     ]).compactMap({ $0 as? CIFaceFeature })
     
-    guard let feature = features.first,
-          feature.type == CIFeatureTypeFace
-    else {
-      return nil
-    }
+    var features: [Feature] = []
+    var resizedImages: [UIImage] = []
     
-    // We get an extended face. More width and height. Reposition frame to the new extent
-    let originx:CGFloat = 0.0
-    let difference = (ciImage.extent.width - feature.bounds.width) / 2.0
-    var originy = feature.bounds.origin.y - difference
-    originy = originy < 0 ? 0 : originy
-    let width = ciImage.extent.width
-    let height = ciImage.extent.width
-    let reducedRect = CGRect(x: originx,
-                             y: originy,
-                             width: width,
-                             height: height
-    )
+    for f in featuresArray {
+      let feature = f
+      
+      // We get an extended face. More width and height. Reposition frame to the new extent
+      let originx:CGFloat = 0.0
+      let difference = (ciImage.extent.width - feature.bounds.width) / 2.0
+      var originy = feature.bounds.origin.y - difference
+      originy = originy < 0 ? 0 : originy
+      let width = ciImage.extent.width
+      let height = ciImage.extent.width
+      let reducedRect = CGRect(x: originx,
+                               y: originy,
+                               width: width,
+                               height: height
+      )
+      
+      let reducedCIImage = ciImage
+        .cropped(to: reducedRect)
+      
+      guard let cgImage = ciContext.createCGImage(reducedCIImage, from: reducedCIImage.extent) else { return nil }
+      let newImage = UIImage(cgImage: cgImage)
+      
+      UIGraphicsBeginImageContextWithOptions(CGSize(width: cropSize, height: cropSize), false, 0.0);
+      newImage.draw(in: CGRect(x: 0, y: 0, width: cropSize, height: cropSize))
+      guard let resizeImage:UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return nil }
+      UIGraphicsEndImageContext()
+      resizedImages.append(resizeImage)
+      features.append(feature)
+  }
     
-    let reducedCIImage = ciImage
-      .cropped(to: reducedRect)
-    
-    guard let cgImage = ciContext.createCGImage(reducedCIImage, from: reducedCIImage.extent) else { return nil }
-    let newImage = UIImage(cgImage: cgImage)
-    
-    UIGraphicsBeginImageContextWithOptions(CGSize(width: cropSize, height: cropSize), false, 0.0);
-    newImage.draw(in: CGRect(x: 0, y: 0, width: cropSize, height: cropSize))
-    guard let resizeImage:UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return nil }
-    UIGraphicsEndImageContext()
-    
-    return (resizeImage,feature)
+    return (resizedImages,features)
   }
   
 }

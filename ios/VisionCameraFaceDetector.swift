@@ -2,6 +2,14 @@
 import AVKit
 import Vision
 
+
+struct FaceBounds {
+  var top: Int
+  var left: Int
+  var right: Int
+  var bottom: Int
+}
+
 @objc(FaceDetectorFrameProcessorPlugin)
 public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBase {
     @objc
@@ -14,33 +22,48 @@ public class FaceDetectorFrameProcessorPlugin: NSObject, FrameProcessorPluginBas
       let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
       let image = UIImage(cgImage: cgImage)
       
-      let imageQService = ImageQualityService(buffer: frame.buffer)
-      let luminance = imageQService.getBrightness()
 
       let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,cropSize: CGFloat(160))
 
 
       let extractedData =  faceExtractor.extractFace(image)
-      let features = extractedData?.features
+      let imageQService = ImageQualityService(buffer: frame.buffer)
 
-
-  
-      var result =  [String:Any]()
-
-      if ((features) != nil) {
-        result.updateValue(Bool(features?.hasSmile ?? false), forKey: "hasSmile")
-        result.updateValue([Int(features?.bounds.minX ?? 0),
-                            Int(features?.bounds.minY ?? 0),
-                            Int(features?.bounds.maxX ?? 0),
-                            Int(features?.bounds.maxY ?? 0)], forKey: "bounds")
+      
+      guard
+        let data = extractedData
+      else{
+        return []
+      }
+      
+      var results:[[String:Any]] = []
+      
+      for feature in data.features {
+        
+        var result =  [String:Any]()
+        let faceBounds = FaceBounds(top: Int(feature.bounds.minY ?? 0),
+                                    left: Int(feature.bounds.minX ?? 0),
+                                    right: Int(feature.bounds.maxX ?? 0),
+                                    bottom: Int(feature.bounds.maxY ?? 0)
+                                    
+        )
+        
+        let luminanceStats = imageQService.getLuminanceStats(bounds: faceBounds, imageWidth: image.cgImage!.width)
+        result.updateValue(Bool(feature.hasSmile ?? false), forKey: "hasSmile")
+        result.updateValue([Int(feature.bounds.minX ?? 0),
+                            Int(feature.bounds.minY ?? 0),
+                            Int(feature.bounds.maxX ?? 0),
+                            Int(feature.bounds.maxY ?? 0)], forKey: "bounds")
         result.updateValue(Int(CVPixelBufferGetHeight(imageBuffer)), forKey: "height")
         result.updateValue(Int(CVPixelBufferGetWidth(imageBuffer)), forKey: "width")
-        result.updateValue(Float(features?.eyeRight ?? 0.0), forKey: "eyeRight")
-        result.updateValue(Float(features?.eyeLeft ?? 0.0), forKey: "eyeLeft")
-        result.updateValue(features?.trackingIDValue as Any, forKey: "trackingId")
-        result.updateValue(luminance, forKey: "luminance")
-        
+        result.updateValue(Float(feature.eyeRight ?? 0.0), forKey: "eyeRight")
+        result.updateValue(Float(feature.eyeLeft ?? 0.0), forKey: "eyeLeft")
+        result.updateValue(feature.trackingIDValue as Any, forKey: "trackingId")
+        result.updateValue(luminanceStats.scene, forKey: "luminance")
+        result.updateValue(luminanceStats.splitLightingDifference, forKey: "splitLightingDifference")
+        results.append(result)
       }
-      return [result]
+      
+      return results
     }
 }

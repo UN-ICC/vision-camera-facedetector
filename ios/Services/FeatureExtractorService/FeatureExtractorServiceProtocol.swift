@@ -34,7 +34,7 @@ extension CIFaceFeature: Feature {
 }
 
 protocol FeatureExtractorServiceProtocol {
-  func extractFace(_ img: UIImage) -> (face: UIImage, features: Feature)?
+  func extractFace(_ img: UIImage) -> (face: [UIImage], features: [Feature])?
 }
 
 enum FeatureExtractorServiceType:Int {

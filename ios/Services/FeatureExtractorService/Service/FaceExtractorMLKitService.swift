@@ -64,7 +64,7 @@ class FaceExtractorMLKitService: NSObject,FeatureExtractorServiceProtocol {
     self.cropSize = cropSize
   }
   
-  func extractFace(_ img: UIImage) -> (face: UIImage, features: Feature)? {
+  func extractFace(_ img: UIImage) -> (face: [UIImage], features: [Feature])? {
     defer {
       ciContext.clearCaches()
     }
@@ -79,25 +79,34 @@ class FaceExtractorMLKitService: NSObject,FeatureExtractorServiceProtocol {
       }
       let visionImage = VisionImage(image: imgForDetection)
       let featuresArray = try faceDetector.results(in: visionImage)
-      guard let feature = featuresArray.first,
-            feature.hasSmilingProbability,
-            let ciImage = CIImage(image: imgForDetection)
-      else {
-        return nil
+      
+      var features: [Feature] = []
+      var resizedImages: [UIImage] = []
+      
+
+      
+      for f in featuresArray {
+        let feature = f;
+        feature.hasSmilingProbability;
+        let ciImage = CIImage(image: imgForDetection)
+
+        
+        let reducedCIImage = ciImage!
+          .cropped(to: feature.frame)
+        
+        guard let cgImage = ciContext.createCGImage(reducedCIImage, from: reducedCIImage.extent) else { return nil }
+        let newImage = UIImage(cgImage: cgImage)
+        
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: cropSize, height: cropSize), false, 1.0);
+        newImage.draw(in: CGRect(x: 0, y: 0, width: cropSize, height: cropSize))
+        guard let resizeImage:UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return nil }
+        UIGraphicsEndImageContext()
+        resizedImages.append(resizeImage)
+        features.append(feature)
       }
       
-      let reducedCIImage = ciImage
-        .cropped(to: feature.frame)
       
-      guard let cgImage = ciContext.createCGImage(reducedCIImage, from: reducedCIImage.extent) else { return nil }
-      let newImage = UIImage(cgImage: cgImage)
-      
-      UIGraphicsBeginImageContextWithOptions(CGSize(width: cropSize, height: cropSize), false, 1.0);
-      newImage.draw(in: CGRect(x: 0, y: 0, width: cropSize, height: cropSize))
-      guard let resizeImage:UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return nil }
-      UIGraphicsEndImageContext()
-      
-      return (resizeImage,feature)
+      return (resizedImages,features)
     }
     catch let error {
       return nil
