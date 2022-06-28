@@ -8,17 +8,17 @@
 
 import UIKit
 
-class FeatureExtractorServiceFactory: NSObject{
-  class func serviceWith(type: FeatureExtractorServiceType,
-                         accuracy:String = CIDetectorAccuracyLow,
-                         cropSize:CGFloat) -> FeatureExtractorServiceProtocol {
-    switch type {
-    case .Native:
-      return NativeFeatureExtractorService(accuracy: accuracy, cropSize: cropSize)
-    case .NativeFullImage:
-      return NativeFeatureExtractorFullImageService(accuracy: accuracy, cropSize: cropSize)
-    case .MLKit:
-      return FaceExtractorMLKitService(accuracy: accuracy, cropSize: cropSize)
+public class FeatureExtractorServiceFactory: NSObject{
+    public class func serviceWith(type: FeatureExtractorServiceType,
+                                  accuracy:String = CIDetectorAccuracyLow,
+                                  cropSize:CGFloat) -> FeatureExtractorServiceProtocol {
+        switch type {
+        case .Native:
+            return NativeFeatureExtractorService(accuracy: accuracy, cropSize: cropSize)
+        case .NativeFullImage:
+            return NativeFeatureExtractorFullImageService(accuracy: accuracy, cropSize: cropSize)
+        case .MLKit:
+            return FaceExtractorMLKitService(accuracy: accuracy, cropSize: cropSize)
+        }
     }
-  }
 }
