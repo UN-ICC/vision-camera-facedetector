@@ -78,7 +78,7 @@ public class FaceExtractorMLKitService: NSObject,FeatureExtractorServiceProtocol
                 return nil
             }
             let visionImage = VisionImage(image: imgForDetection)
-            let featuresArray = try faceDetector.results(in: visionImage)
+            let featuresArray:[Any] = try faceDetector.results(in: visionImage)
             
             var features: [Feature] = []
             var resizedImages: [UIImage] = []
@@ -86,7 +86,7 @@ public class FaceExtractorMLKitService: NSObject,FeatureExtractorServiceProtocol
             
             
             for f in featuresArray {
-                let feature = f;
+                let feature = f as! Face;
                 feature.hasSmilingProbability;
                 let ciImage = CIImage(image: imgForDetection)
                 

@@ -33,7 +33,7 @@ public class ImageQualityService: NSObject {
         return brightnessValue
     }
     
-    public func getLuminanceStats(bounds: FaceBounds, imageWidth: Int) -> LuminanceStats {
+    func getLuminanceStats(bounds: FaceBounds, imageWidth: Int) -> LuminanceStats {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(self.buffer) else {
             return LuminanceStats(scene: 1.0, splitLightingDifference: 0.0)
         }
