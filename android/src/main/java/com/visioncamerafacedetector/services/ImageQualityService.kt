@@ -33,7 +33,7 @@ class ImageQualityService(buffer: ImageProxy) {
     return pixels.average() / 255
   }
 
-  fun getLuminanceStats(faceBounds:Rect, imageWidth:Int): LuminanceStats {
+  fun getLuminanceStats(faceBounds:Rect, imageWidth:Int, rotationDegrees: Int): LuminanceStats {
 
     // Since format in ImageAnalysis is YUV, image.planes[0] contains the Y (luminance) plane
     val buffer = imageBuffer.planes[0].buffer
@@ -42,6 +42,7 @@ class ImageQualityService(buffer: ImageProxy) {
     // Compute average luminance for the image
 
     val midHorizontal = (faceBounds.right - faceBounds.left) / 2 + faceBounds.left
+    val midVertical = (faceBounds.bottom - faceBounds.top) / 2 + faceBounds.top
     var luminanceScene = 0.0
     var luminanceR = 0.0
     var luminanceL = 0.0
@@ -59,9 +60,14 @@ class ImageQualityService(buffer: ImageProxy) {
       } else if (midHorizontal <= x && x < faceBounds.right && faceBounds.top <= y && y < faceBounds.bottom) {
         luminanceR += (byte.toInt() and 0xFF).toDouble() / 255.0
         right += 1
-      } else {
+      } else if (midVertical >= y && rotationDegrees == 90){
+        // Monitor only top of the scene
         luminanceScene += (byte.toInt() and 0xFF).toDouble()  / 255.0
         scene += 1
+      } else if (midVertical < y && rotationDegrees == 270){
+        // Monitor only top of the scene
+      luminanceScene += (byte.toInt() and 0xFF).toDouble()  / 255.0
+      scene += 1
       }
     }
 

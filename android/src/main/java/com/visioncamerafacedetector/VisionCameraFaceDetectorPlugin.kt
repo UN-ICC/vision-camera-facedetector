@@ -48,7 +48,7 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
 
             val f = Rect(face.boundingBox.left, face.boundingBox.top, face.boundingBox.right, face.boundingBox.bottom)
 
-            val luminanceStats:LuminanceStats = imageService.getLuminanceStats(f, image.width)
+            val luminanceStats:LuminanceStats = imageService.getLuminanceStats(f, image.width, frame.imageInfo.rotationDegrees)
 
             val imageWidth = if (rotated) image.height else image.width
             val imageHeight = if (rotated) image.width else image.height
