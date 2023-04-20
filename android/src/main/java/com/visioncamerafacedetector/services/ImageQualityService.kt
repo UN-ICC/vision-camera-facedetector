@@ -66,8 +66,8 @@ class ImageQualityService(buffer: ImageProxy) {
         scene += 1
       } else if (midVertical < y && rotationDegrees == 270){
         // Monitor only top of the scene
-      luminanceScene += (byte.toInt() and 0xFF).toDouble()  / 255.0
-      scene += 1
+        luminanceScene += (byte.toInt() and 0xFF).toDouble()  / 255.0
+        scene += 1
       }
     }
 
