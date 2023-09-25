@@ -18,10 +18,12 @@ public struct LuminanceStats {
 public class ImageQualityService: NSObject {
     
     private var buffer: CMSampleBuffer
+    private var orientation: CGImagePropertyOrientation
     
     
-    init(buffer:CMSampleBuffer) {
+    init(buffer:CMSampleBuffer, orientation: CGImagePropertyOrientation) {
         self.buffer = buffer
+        self.orientation = orientation
     }
     
     
@@ -37,7 +39,7 @@ public class ImageQualityService: NSObject {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(self.buffer) else {
             return LuminanceStats(scene: 1.0, splitLightingDifference: 0.0)
         }
-        let ciimage = CIImage(cvPixelBuffer: imageBuffer)
+        let ciimage = CIImage(cvPixelBuffer: imageBuffer).oriented(self.orientation)
         let context = CIContext(options: nil)
         let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
         let image = UIImage(cgImage: cgImage)
@@ -89,7 +91,7 @@ public class ImageQualityService: NSObject {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(self.buffer) else {
             return 1.0
         }
-        let ciimage = CIImage(cvPixelBuffer: imageBuffer)
+        let ciimage = CIImage(cvPixelBuffer: imageBuffer).oriented(self.orientation)
         let context = CIContext(options: nil)
         let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
         let image = UIImage(cgImage: cgImage)

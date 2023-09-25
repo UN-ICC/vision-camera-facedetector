@@ -30,17 +30,30 @@ public class FaceDetectorService: NSObject {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(frame.buffer) else {
             return nil
         }
-        let ciimage = CIImage(cvPixelBuffer: imageBuffer)
+      
+        var orientation: CGImagePropertyOrientation = .up
+      
+        if args[1] as? String == "landscapeLeft" {
+          orientation = .down
+        }
+        
+        let ciimage = CIImage(cvPixelBuffer: imageBuffer).oriented(orientation)
+        
+      
         let context = CIContext(options: nil)
+
+      
         let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
         let image = UIImage(cgImage: cgImage)
         
         
+
+      
         let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,cropSize: CGFloat(160))
         
         
         let extractedData =  faceExtractor.extractFace(image)
-        let imageQService = ImageQualityService(buffer: frame.buffer)
+        let imageQService = ImageQualityService(buffer: frame.buffer, orientation: orientation)
         
         
         guard
@@ -63,8 +76,8 @@ public class FaceDetectorService: NSObject {
             
             let luminanceStats = imageQService.getLuminanceStats(bounds: faceBounds, imageWidth: image.cgImage!.width)
             
-            let height = Int(CVPixelBufferGetHeight(imageBuffer))
-            let width = Int(CVPixelBufferGetWidth(imageBuffer))
+            let height = Int(image.cgImage!.height)
+            let width = Int(image.cgImage!.width)
             
             results.append(ImageFaceFeatures(
                 width: width,
