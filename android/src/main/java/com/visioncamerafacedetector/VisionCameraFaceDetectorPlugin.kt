@@ -19,6 +19,7 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
 import com.visioncamerafacedetector.services.ImageQualityService
 import com.visioncamerafacedetector.services.LuminanceStats
+import kotlin.random.Random
 
 
 class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
@@ -72,12 +73,12 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
             val imageHeight = if (rotated) image.width else image.height
 
             val map = WritableNativeMap()
-            map.putBoolean("hasSmile", face.smilingProbability > 0.5)
-            map.putInt("trackingId", face.trackingId)
+            map.putBoolean("hasSmile", face.smilingProbability?.let { it > 0.5 } ?: false)
+            map.putInt("trackingId", face.trackingId ?: Random.nextInt(2))
             map.putInt("height", imageHeight)
             map.putInt("width",imageWidth)
-            map.putDouble("eyeRight", face.rightEyeOpenProbability.toDouble())
-            map.putDouble("eyeLeft", face.leftEyeOpenProbability.toDouble())
+            map.putDouble("eyeRight", (face.rightEyeOpenProbability?.toDouble() ?: 0.0))
+            map.putDouble("eyeLeft", (face.leftEyeOpenProbability?.toDouble() ?: 0.0))
             map.putDouble("luminance", luminanceStats.scene)
             map.putDouble("splitLightingDifference", luminanceStats.splitLightingDifference)
 
