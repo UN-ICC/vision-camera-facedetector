@@ -1,44 +1,36 @@
 package com.visioncamerafacedetector.services
 
+import android.graphics.Bitmap
 import android.graphics.Rect
-import android.util.Log
-import androidx.camera.core.ImageProxy
-import org.opencv.core.Core
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.Point
-import org.opencv.core.Size
-import org.opencv.imgproc.Imgproc
-import java.nio.ByteBuffer
+import android.graphics.drawable.BitmapDrawable
+import android.media.Image
+import java.io.ByteArrayOutputStream
 import kotlin.math.abs
 
 
 data class LuminanceStats(val scene: Double, val splitLightingDifference:Double)
 
 
-class ImageQualityService(buffer: ImageProxy) {
+class ImageQualityService(buffer: Image) {
 
   // Since format in ImageAnalysis is YUV, image.planes[0] contains the Y (luminance) plane
-  val luminanceByteArray: ByteArray = imageProxyToByteArray(buffer)
-  val rotationDegrees: Int = buffer.imageInfo.rotationDegrees
+  val luminanceByteArray: ByteArray = imageToByteArray(buffer)
 
-  private fun imageProxyToByteArray(imageProxy: ImageProxy): ByteArray {
-      val yBuffer = imageProxy.planes[0].buffer
-      val ySize = yBuffer.remaining()
-      val yByteArray = ByteArray(ySize)
-      yBuffer.get(yByteArray)
-      val matYuv = Mat(imageProxy.height, imageProxy.width, CvType.CV_8UC1)
-      matYuv.put(0, 0, yByteArray)
-        if (imageProxy.imageInfo.rotationDegrees==90) {
-          val matYuv = Mat(imageProxy.height, imageProxy.width, CvType.CV_8UC1)
-          matYuv.put(0, 0, yByteArray)
-          val rotatedMat = Mat(matYuv.width(), matYuv.height(),CvType.CV_8UC1)
-          Core.rotate(matYuv,rotatedMat, Core.ROTATE_90_COUNTERCLOCKWISE)
-          val yRotatedByteArray = ByteArray(ySize)
-          rotatedMat.get(0, 0, yRotatedByteArray)
-        return yRotatedByteArray
-      }
-      return yByteArray
+  private fun imageToByteArray(image: Image): ByteArray {
+    val nv21: ByteArray
+    val yBuffer = image.planes[0].buffer
+    val uBuffer = image.planes[1].buffer
+    val vBuffer = image.planes[2].buffer
+    val ySize = yBuffer.remaining()
+    val uSize = uBuffer.remaining()
+    val vSize = vBuffer.remaining()
+    nv21 = ByteArray(ySize + uSize + vSize)
+
+    //U and V are swapped
+    yBuffer[nv21, 0, ySize]
+    vBuffer[nv21, ySize, vSize]
+    uBuffer[nv21, ySize + vSize, uSize]
+    return nv21
   }
 
   fun getLuminance(): Double {

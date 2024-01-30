@@ -16,9 +16,24 @@ public protocol Feature{
     var smileConfidence: Float { get }
     var eyeRight: Float { get }
     var eyeLeft: Float { get }
+    var angleX: Float { get }
+    var angleY: Float { get }
+    var angleZ: Float { get }
 }
 
 extension CIFaceFeature: Feature {
+     public var angleX: Float {
+        return Float(0)
+     }
+
+    public var angleY: Float {
+      return Float(0)
+    }
+
+    public var angleZ: Float {
+      return Float(0)
+    }
+
     public var trackingIDValue: Int {
         return Int(self.trackingID)
     }

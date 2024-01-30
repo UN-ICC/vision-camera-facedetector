@@ -15,6 +15,7 @@
 		FEE2DE15283381F400AA2B1F /* FaceExtractorMLKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE0F283381F300AA2B1F /* FaceExtractorMLKitService.swift */; };
 		FEE2DE16283381F400AA2B1F /* NativeFeatureExtractorFullImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE10283381F300AA2B1F /* NativeFeatureExtractorFullImageService.swift */; };
 		FEE2DE17283381F400AA2B1F /* NativeFeatureExtractorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE2DE11283381F300AA2B1F /* NativeFeatureExtractorService.swift */; };
+		6B417D8924164DD9985D6FF2 /* VisionCameraFaceDetector.mm in Resources */ = {isa = PBXBuildFile; fileRef = 0B1FA25BB4824758B504A4A9 /* VisionCameraFaceDetector.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +42,7 @@
 		FEE2DE0F283381F300AA2B1F /* FaceExtractorMLKitService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceExtractorMLKitService.swift; sourceTree = "<group>"; };
 		FEE2DE10283381F300AA2B1F /* NativeFeatureExtractorFullImageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorFullImageService.swift; sourceTree = "<group>"; };
 		FEE2DE11283381F300AA2B1F /* NativeFeatureExtractorService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeFeatureExtractorService.swift; sourceTree = "<group>"; };
+		0B1FA25BB4824758B504A4A9 /* VisionCameraFaceDetector.mm */ = {isa = PBXFileReference; name = "VisionCameraFaceDetector.mm"; path = "VisionCameraFaceDetector.mm"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 				F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */,
 				FEE2DE08283381F300AA2B1F /* Services */,
 				134814211AA4EA7D00B7C361 /* Products */,
+				23246EF76A594ED8B45BEBB8 /* VisionCameraFaceDetector */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,6 +114,15 @@
 			path = Service;
 			sourceTree = "<group>";
 		};
+		23246EF76A594ED8B45BEBB8 /* VisionCameraFaceDetector */ = {
+			isa = PBXGroup;
+			children = (
+				0B1FA25BB4824758B504A4A9 /* VisionCameraFaceDetector.mm */,
+			);
+			name = VisionCameraFaceDetector;
+			path = VisionCameraFaceDetector;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -137,7 +149,7 @@
 		58B511D31A9E6C8500147676 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 920;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					58B511DA1A9E6C8500147676 = {
@@ -176,6 +188,7 @@
 				FEE2DE15283381F400AA2B1F /* FaceExtractorMLKitService.swift in Sources */,
 				FEE2DE14283381F400AA2B1F /* FeatureExtractorServiceProtocol.swift in Sources */,
 				FEE2DE16283381F400AA2B1F /* NativeFeatureExtractorFullImageService.swift in Sources */,
+				6B417D8924164DD9985D6FF2 /* VisionCameraFaceDetector.mm in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

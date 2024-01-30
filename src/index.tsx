@@ -1,5 +1,6 @@
-/* eslint-disable no-undef */
-import type { Frame } from 'react-native-vision-camera';
+import { VisionCameraProxy, Frame } from 'react-native-vision-camera';
+
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('faceDetector');
 
 /**
  * Scans OCR.
@@ -8,5 +9,7 @@ import type { Frame } from 'react-native-vision-camera';
 export function faceDetector(frame: Frame): any {
   'worklet';
   // @ts-ignore
-  return __faceDetector(frame);
+  if (plugin == null) throw new Error('Failed to load Frame Processor Plugin "faceDetector"!')
+
+  return plugin.call(frame);
 }

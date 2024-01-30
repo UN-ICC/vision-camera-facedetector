@@ -1,29 +1,25 @@
 package com.visioncamerafacedetector
 
-import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Rect
 import android.media.Image
 import android.util.Log
-import androidx.camera.core.ImageProxy
-import com.facebook.react.bridge.WritableNativeArray
-import com.facebook.react.bridge.WritableNativeMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.mrousavy.camera.frameprocessor.Frame
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
+import com.mrousavy.camera.frameprocessor.VisionCameraProxy
 import com.visioncamerafacedetector.services.ImageQualityService
 import com.visioncamerafacedetector.services.LuminanceStats
 import kotlin.random.Random
 
 
-class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
-
+class VisionCameraFaceDetectorPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?): FrameProcessorPlugin() {
+    init {
+        Log.d("VisionCameraFaceDetecto", "ExampleKotlinFrameProcessorPlugin initialized with options: " + options?.toString())
+    }
 
   fun flipHorizontal(rectangle: Rect, imageWidth: Int): Rect {
     val flippedRectangle = Rect()
@@ -34,11 +30,7 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
     return flippedRectangle
   }
 
-  override fun callback(frame: ImageProxy, params: Array<Any>): Any? {
-    @SuppressLint("UnsafeOptInUsageError")
-
-    val camera: String = if (params.size > 0 && params[0] is String) params[0].toString() else "unknown"
-    val rotationDegrees: Int = frame.imageInfo.rotationDegrees
+  override fun callback(frame: Frame, arguments: Map<String, Any>?): Any {
     val mediaImage: Image? = frame.image
     val options = FaceDetectorOptions.Builder()
       .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
@@ -48,49 +40,62 @@ class VisionCameraFaceDetectorPlugin: FrameProcessorPlugin("faceDetector") {
       .enableTracking()
       .build()
 
-    val imageService = ImageQualityService(frame)
+    var rotated: Boolean = false
+    var flipped: Boolean = false
 
-    val rotated: Boolean = (rotationDegrees == 90 || rotationDegrees == 270)
-    val flipped: Boolean = (camera=="front")
+    val rotationDegrees: Int = frame.orientation.toDegrees()
 
-    val array = WritableNativeArray()
+    if (arguments != null) {
+      for (key in arguments.keys) {
+        Log.d("VisionCameraFaceDetecto", "key = $key");
+      }
+      if (arguments.containsKey("isFront")) {
+        flipped = arguments["isFront"] as Boolean
+      }
+      if (arguments.containsKey("rotateImage")) {
+        rotated = arguments["rotateImage"] as Boolean
+        Log.d("VisionCameraFaceDetecto","rot: "+rotated);
+      }
+    }
+
+    val array = arrayListOf<Any>()
 
     if (mediaImage != null) {
-      val image = InputImage.fromMediaImage(mediaImage, rotationDegrees)
+      val imageService = ImageQualityService(mediaImage)
       val detector = FaceDetection.getClient(options)
-      var task: Task<List<Face>> = detector.process(image)
+      val task: Task<List<Face>> = detector.process(mediaImage, rotationDegrees)
       try {
-        var faces = Tasks.await(task)
+        val faces = Tasks.await(task)
 
-        if (faces.size >= 1) {
+        if (faces.isNotEmpty()) {
           for (face in faces) {
 
             var f = Rect(face.boundingBox.left, face.boundingBox.top, face.boundingBox.right, face.boundingBox.bottom)
 
-            val luminanceStats:LuminanceStats = imageService.getLuminanceStats(f, image.width)
+            val luminanceStats: LuminanceStats = imageService.getLuminanceStats(f, mediaImage.width)
 
-            val imageWidth = if (rotated) image.height else image.width
-            val imageHeight = if (rotated) image.width else image.height
+            val imageWidth = if (rotated) mediaImage.height else mediaImage.width
+            val imageHeight = if (rotated) mediaImage.width else mediaImage.height
 
-            val map = WritableNativeMap()
-            map.putBoolean("hasSmile", face.smilingProbability?.let { it > 0.5 } ?: false)
-            map.putInt("trackingId", face.trackingId ?: Random.nextInt(2))
-            map.putInt("height", imageHeight)
-            map.putInt("width",imageWidth)
-            map.putDouble("eyeRight", (face.rightEyeOpenProbability?.toDouble() ?: 0.0))
-            map.putDouble("eyeLeft", (face.leftEyeOpenProbability?.toDouble() ?: 0.0))
-            map.putDouble("luminance", luminanceStats.scene)
-            map.putDouble("splitLightingDifference", luminanceStats.splitLightingDifference)
+            val map = mutableMapOf<String, Any>()
+            map["hasSmile"] = face.smilingProbability?.let { it > 0.5 } ?: false
+            map["trackingId"] = face.trackingId ?: Random.nextInt(2)
+            map["height"] = imageHeight
+            map["width"] = imageWidth
+            map["eyeRight"] = (face.rightEyeOpenProbability?.toDouble() ?: 0.0)
+            map["eyeLeft"] = (face.leftEyeOpenProbability?.toDouble() ?: 0.0)
+            map["luminance"] = luminanceStats.scene
+            map["splitLightingDifference"] = luminanceStats.splitLightingDifference
 
-            if (flipped && rotated) f = flipHorizontal(f, image.height)
-            if (flipped && !rotated) f = flipHorizontal(f, image.width)
-            val bounds = WritableNativeArray()
-            bounds.pushInt(f.left)
-            bounds.pushInt(f.top)
-            bounds.pushInt(f.right)
-            bounds.pushInt(f.bottom)
-            map.putArray("bounds", bounds)
-            array.pushMap(map)
+            if (flipped && rotated) f = flipHorizontal(f, mediaImage.height)
+            if (flipped && !rotated) f = flipHorizontal(f, mediaImage.width)
+            val bounds = arrayListOf<Int>()
+            bounds.add(f.left)
+            bounds.add(f.top)
+            bounds.add(f.right)
+            bounds.add(f.bottom)
+            map["bounds"] = bounds
+            array.add(map)
           }
         }
       } catch (e: Exception) {
