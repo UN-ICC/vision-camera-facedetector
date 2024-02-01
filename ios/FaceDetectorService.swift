@@ -34,7 +34,7 @@ public class FaceDetectorService: NSObject {
 
         var orientation: CGImagePropertyOrientation = .up
 
-        if args![1] as? String == "landscapeLeft" {
+        if args != nil && !args!.isEmpty && args![1] as? String == "landscapeLeft" {
           orientation = .down
         }
 

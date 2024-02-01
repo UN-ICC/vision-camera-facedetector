@@ -12,8 +12,8 @@
 @implementation FaceDetectorFrameProcessorPlugin (FrameProcessorPluginLoader)
 + (void)load
 {
-  [FrameProcessorPluginRegistry addFrameProcessorPlugin:@"faceDetector" withInitializer:^FrameProcessorPlugin* (NSDictionary* options) {
-    return [[FaceDetectorFrameProcessorPlugin alloc] initWithOptions:nil];
+  [FrameProcessorPluginRegistry addFrameProcessorPlugin:@"faceDetector" withInitializer:^FrameProcessorPlugin* (VisionCameraProxyHolder* proxy, NSDictionary* options) {
+      return [[FaceDetectorFrameProcessorPlugin alloc] initWithProxy:proxy withOptions:options];
   }];
 }
 @end
