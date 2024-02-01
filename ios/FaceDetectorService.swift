@@ -47,15 +47,10 @@ public class FaceDetectorService: NSObject {
         let cgImage = context.createCGImage(ciimage, from: ciimage.extent)!
         let image = UIImage(cgImage: cgImage)
 
-
-
-
         let faceExtractor = FeatureExtractorServiceFactory.serviceWith(type: FeatureExtractorServiceType.MLKit,cropSize: CGFloat(160))
-
 
         let extractedData =  faceExtractor.extractFace(image)
         let imageQService = ImageQualityService(buffer: frame.buffer, orientation: orientation)
-
 
         guard
             let data = extractedData
@@ -72,7 +67,6 @@ public class FaceDetectorService: NSObject {
                                         left: Int(feature.bounds.minX ?? 0),
                                         right: Int(feature.bounds.maxX ?? 0),
                                         bottom: Int(feature.bounds.maxY ?? 0)
-
             )
 
             let luminanceStats = imageQService.getLuminanceStats(bounds: faceBounds, imageWidth: image.cgImage!.width)
