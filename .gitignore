@@ -61,5 +61,6 @@ lib/
 
 # IGnore yarn cache
 .yarn/
+.yarn/*
 #ignore local settings
 example/ios/.xcode.env.local
