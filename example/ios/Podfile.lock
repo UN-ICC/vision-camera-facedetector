@@ -1117,7 +1117,7 @@ PODS:
     - React-callinvoker
     - React-Core
     - react-native-worklets-core
-  - VisionCameraFaceDetector (1.3.3):
+  - VisionCameraFaceDetector (2.0.0):
     - GoogleMLKit/FaceDetection
     - React-Core
     - VisionCamera
@@ -1367,9 +1367,9 @@ SPEC CHECKSUMS:
   ReactCommon: 45b5d4f784e869c44a6f5a8fad5b114ca8f78c53
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   VisionCamera: edbcd00e27a438b2228f67823e2b8d15a189065f
-  VisionCameraFaceDetector: 9df24e080a462a1925ab16184b9514b9a7e93741
+  VisionCameraFaceDetector: 3ae1dbc1a6883bc00acf8acb137c3b4ed5091b9d
   Yoga: 13c8ef87792450193e117976337b8527b49e8c03
 
 PODFILE CHECKSUM: 2d73ebe63d0b4bb3ba0121efb58e6569f2c28ac4
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.11.3
