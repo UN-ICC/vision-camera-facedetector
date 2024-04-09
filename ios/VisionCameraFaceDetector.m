@@ -3,17 +3,15 @@
 #import "VisionCameraFaceDetector-Swift.h" // <--- replace "YOUR_XCODE_PROJECT_NAME" with the actual value of your xcode project name
 
 
-//VISION_EXPORT_SWIFT_FRAME_PROCESSOR(FaceDetectorFrameProcessorPlugin, faceDetector)
+VISION_EXPORT_SWIFT_FRAME_PROCESSOR(FaceDetectorFrameProcessorPlugin, faceDetector)
 
 
-@interface FaceDetectorFrameProcessorPlugin (FrameProcessorPluginLoader)
+
+// Dont ask me why, but Xcode is ignoring the macro above if we dont declare anything else in this file
+@interface FaceDetectorFrameProcessorPlugin (mock)
+- (id) mock;
 @end
 
-@implementation FaceDetectorFrameProcessorPlugin (FrameProcessorPluginLoader)
-+ (void)load
-{
-  [FrameProcessorPluginRegistry addFrameProcessorPlugin:@"faceDetector" withInitializer:^FrameProcessorPlugin* (VisionCameraProxyHolder* proxy, NSDictionary* options) {
-      return [[FaceDetectorFrameProcessorPlugin alloc] initWithProxy:proxy withOptions:options];
-  }];
-}
+@implementation FaceDetectorFrameProcessorPlugin (mock)
+- (id) mock {}
 @end
