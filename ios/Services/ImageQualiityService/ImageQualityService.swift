@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import CoreMedia
 
 
 public struct LuminanceStats {

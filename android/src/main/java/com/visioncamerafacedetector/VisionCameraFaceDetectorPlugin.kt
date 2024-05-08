@@ -1,16 +1,21 @@
 package com.visioncamerafacedetector
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.media.Image
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.mrousavy.camera.frameprocessor.Frame
-import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
-import com.mrousavy.camera.frameprocessor.VisionCameraProxy
+import com.mrousavy.camera.core.types.Orientation
+import com.mrousavy.camera.frameprocessors.Frame
+import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
+import com.mrousavy.camera.frameprocessors.VisionCameraProxy
 import com.visioncamerafacedetector.services.ImageQualityService
 import com.visioncamerafacedetector.services.LuminanceStats
 import kotlin.random.Random
@@ -30,8 +35,22 @@ class VisionCameraFaceDetectorPlugin(proxy: VisionCameraProxy, options: Map<Stri
     return flippedRectangle
   }
 
+  private fun getFrameRotation(
+    orientation: Orientation
+  ): Int {
+    return when (orientation) {
+      Orientation.PORTRAIT -> 0
+      Orientation.LANDSCAPE_LEFT -> 90
+      Orientation.PORTRAIT_UPSIDE_DOWN -> 180
+      Orientation.LANDSCAPE_RIGHT -> 270
+    }
+  }
+
+  @RequiresApi(Build.VERSION_CODES.O)
   override fun callback(frame: Frame, arguments: Map<String, Any>?): Any {
     val mediaImage: Image? = frame.image
+
+
     val options = FaceDetectorOptions.Builder()
       .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
       .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
@@ -40,10 +59,11 @@ class VisionCameraFaceDetectorPlugin(proxy: VisionCameraProxy, options: Map<Stri
       .enableTracking()
       .build()
 
-    var rotated: Boolean = false
+
     var flipped: Boolean = false
 
-    val rotationDegrees: Int = frame.orientation.toDegrees()
+    val orientation: Orientation = frame.orientation
+    val rotationDegrees: Int = getFrameRotation(orientation)
 
     if (arguments != null) {
       for (key in arguments.keys) {
@@ -52,19 +72,16 @@ class VisionCameraFaceDetectorPlugin(proxy: VisionCameraProxy, options: Map<Stri
       if (arguments.containsKey("isFront")) {
         flipped = arguments["isFront"] as Boolean
       }
-      if (arguments.containsKey("rotateImage")) {
-        rotated = arguments["rotateImage"] as Boolean
-        Log.d("VisionCameraFaceDetecto","rot: "+rotated);
-      }
+
     }
 
     val array = arrayListOf<Any>()
 
     if (mediaImage != null) {
-      val imageService = ImageQualityService(mediaImage)
-      val detector = FaceDetection.getClient(options)
-      val task: Task<List<Face>> = detector.process(mediaImage, rotationDegrees)
       try {
+        val imageService = ImageQualityService(mediaImage)
+        val detector = FaceDetection.getClient(options)
+        val task: Task<List<Face>> = detector.process(mediaImage, rotationDegrees)
         val faces = Tasks.await(task)
 
         if (faces.isNotEmpty()) {
@@ -74,8 +91,8 @@ class VisionCameraFaceDetectorPlugin(proxy: VisionCameraProxy, options: Map<Stri
 
             val luminanceStats: LuminanceStats = imageService.getLuminanceStats(f, mediaImage.width)
 
-            val imageWidth = if (rotated) mediaImage.height else mediaImage.width
-            val imageHeight = if (rotated) mediaImage.width else mediaImage.height
+            val imageWidth = if (rotationDegrees != 0) mediaImage.height else mediaImage.width
+            val imageHeight = if (rotationDegrees != 0) mediaImage.width else mediaImage.height
 
             val map = mutableMapOf<String, Any>()
             map["hasSmile"] = face.smilingProbability?.let { it > 0.5 } ?: false
@@ -87,8 +104,8 @@ class VisionCameraFaceDetectorPlugin(proxy: VisionCameraProxy, options: Map<Stri
             map["luminance"] = luminanceStats.scene
             map["splitLightingDifference"] = luminanceStats.splitLightingDifference
 
-            if (flipped && rotated) f = flipHorizontal(f, mediaImage.height)
-            if (flipped && !rotated) f = flipHorizontal(f, mediaImage.width)
+            if (flipped && rotationDegrees != 0) f = flipHorizontal(f, mediaImage.height)
+            if (flipped && rotationDegrees == 0) f = flipHorizontal(f, mediaImage.width)
             val bounds = arrayListOf<Int>()
             bounds.add(f.left)
             bounds.add(f.top)
